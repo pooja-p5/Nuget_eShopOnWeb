@@ -1,0 +1,54 @@
+name: Generate SBOM for .NET NuGet Project
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  sbom-dotnet:
+    name: Generate SBOM using Microsoft SBOM Tool
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the code from the repository
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # Set up .NET SDK
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '6.x'
+
+      # Restore dependencies and build the project
+      - name: Restore and Build
+        run: |
+          dotnet restore
+          dotnet build -c Release
+
+      # Install Microsoft SBOM tool
+      - name: Install SBOM Tool
+        run: |
+          wget https://github.com/microsoft/sbom-tool/releases/latest/download/sbom-tool-linux-x64.tar.gz
+          mkdir sbom-tool
+          tar -xzf sbom-tool-linux-x64.tar.gz -C sbom-tool
+          chmod +x sbom-tool/sbom-tool
+
+      # Run the SBOM tool on build output
+      - name: Generate SBOM (SPDX JSON)
+        run: |
+          ./sbom-tool/sbom-tool generate \
+            --build-drop-path ./bin/Release \
+            --package-name MyDotNetApp \
+            --package-version 1.0.0 \
+            --output-path ./sbom \
+            --formats spdxjson
+
+      # Upload the SBOM file as an artifact
+      - name: Upload SBOM Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom-dotnet
+          path: ./sbom
