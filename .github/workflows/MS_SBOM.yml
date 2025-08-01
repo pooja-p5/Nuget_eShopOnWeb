@@ -22,11 +22,22 @@ jobs:
         with:
           dotnet-version: '6.x'
 
-      # Restore dependencies and build the project
+      # Detect solution or project file and store path in an environment variable
+      - name: Find Solution or Project File
+        id: find-project
+        run: |
+          FILE=$(find . -maxdepth 1 \( -name "*.sln" -o -name "*.csproj" \) | head -n 1)
+          if [ -z "$FILE" ]; then
+            echo "No .sln or .csproj file found in root directory."
+            exit 1
+          fi
+          echo "project_path=$FILE" >> $GITHUB_OUTPUT
+
+      # Restore dependencies and build the project or solution
       - name: Restore and Build
         run: |
-          dotnet restore
-          dotnet build -c Release
+          dotnet restore "${{ steps.find-project.outputs.project_path }}"
+          dotnet build "${{ steps.find-project.outputs.project_path }}" -c Release
 
       # Install Microsoft SBOM tool
       - name: Install SBOM Tool
