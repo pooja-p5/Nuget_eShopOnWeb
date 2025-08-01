@@ -39,10 +39,10 @@ jobs:
           dotnet restore "${{ steps.find-project.outputs.project_path }}"
           dotnet build "${{ steps.find-project.outputs.project_path }}" -c Release
 
-      # Install Microsoft SBOM tool
+      # Install Microsoft SBOM tool (v1.3.2 as latest assets may be missing)
       - name: Install SBOM Tool
         run: |
-          wget https://github.com/microsoft/sbom-tool/releases/latest/download/sbom-tool-linux-x64.tar.gz
+          wget https://github.com/microsoft/sbom-tool/releases/download/v1.3.2/sbom-tool-linux-x64.tar.gz
           mkdir sbom-tool
           tar -xzf sbom-tool-linux-x64.tar.gz -C sbom-tool
           chmod +x sbom-tool/sbom-tool
