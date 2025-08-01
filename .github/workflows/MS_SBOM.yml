@@ -16,11 +16,11 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # Set up .NET SDK
+      # Set up .NET SDK that supports .NET 8.0
       - name: Set up .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '6.x'
+          dotnet-version: '8.0.x'
 
       # Detect solution or project file and store path in an environment variable
       - name: Find Solution or Project File
