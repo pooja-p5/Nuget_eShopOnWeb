@@ -32,5 +32,5 @@ jobs:
       - name: Upload SBOM as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: sbom-report
-          path: sbom-output/
+          name: sbom-report-ms
+          path: .
