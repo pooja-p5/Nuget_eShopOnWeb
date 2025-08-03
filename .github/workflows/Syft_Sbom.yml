@@ -1,0 +1,41 @@
+name: Generate SBOM using Syft (SPDX)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  syft-sbom:
+    name: Generate SPDX SBOM
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore NuGet packages
+        run: dotnet restore eShopOnWeb.sln
+
+      - name: Build project
+        run: dotnet build eShopOnWeb.sln --configuration Release
+
+      - name: Install Syft
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
+
+      - name: Generate SPDX SBOM with Syft
+        run: |
+          mkdir sbom-output
+          syft dir:. -o spdx-json > sbom-output/sbom.spdx.json
+
+      - name: Upload SBOM as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: syft-spdx-sbom
+          path: sbom-output/
