@@ -20,7 +20,7 @@ jobs:
           dotnet-version: '8.0.x'  # or 7.0/6.0 as per your project
 
       - name: Restore NuGet packages
-        run: dotnet restore
+        run: dotnet restore eShopOnWeb.sln
 
       - name: Download MS SBOM Tool
         run: |
