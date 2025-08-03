@@ -22,21 +22,12 @@ jobs:
       - name: Restore NuGet packages
         run: dotnet restore eShopOnWeb.sln
 
-      - name: Download MS SBOM Tool
-        run: |
-          wget https://github.com/microsoft/sbom-tool/releases/download/v1.0.8/sbom-tool-linux-x64.tar.gz
-          mkdir sbom-tool
-          tar -xvzf sbom-tool-linux-x64.tar.gz -C sbom-tool
-          chmod +x sbom-tool/sbom-tool
-
       - name: Generate SBOM
         run: |
-          ./sbom-tool/sbom-tool generate \
-            --build-drop-path . \
-            --manifest-dir sbom-output \
-            --package-name "MyNuGetApp" \
-            --package-version "1.0.0" \
-            --verbose
+          curl -Lo $RUNNER_TEMP/sbom-tool https://github.com/microsoft/sbom-tool/releases/latest/download/sbom-tool-linux-x64
+          chmod +x $RUNNER_TEMP/sbom-tool
+          $RUNNER_TEMP/sbom-tool generate -b ./config -bc . -pn MyNuGetApp -pv 1.0.0 -ps Philips_test -nsb https://sbom.philips.com -V Verbose
+
 
       - name: Upload SBOM as artifact
         uses: actions/upload-artifact@v4
