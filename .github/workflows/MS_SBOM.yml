@@ -24,7 +24,7 @@ jobs:
 
       - name: Download MS SBOM Tool
         run: |
-          wget https://github.com/microsoft/sbom-tool/releases/latest/download/sbom-tool-linux-x64.tar.gz
+          wget https://github.com/microsoft/sbom-tool/releases/download/v1.0.8/sbom-tool-linux-x64.tar.gz
           mkdir sbom-tool
           tar -xvzf sbom-tool-linux-x64.tar.gz -C sbom-tool
           chmod +x sbom-tool/sbom-tool
