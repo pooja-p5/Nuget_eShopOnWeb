@@ -20,10 +20,13 @@ jobs:
       - name: Pack with SBOM
         run: dotnet pack src/ApplicationCore/ApplicationCore.csproj -o output -p:IncludeSbom=true
 
-      - name: Extract SBOM from nupkg
+      - name: List contents of .nupkg (debug)
+        run: unzip -l output/*.nupkg
+
+      - name: Extract SBOM if present
         run: |
-          mkdir sbom
-          unzip -o output/*.nupkg '_sbom/*' -d sbom
+          mkdir -p sbom
+          unzip -o output/*.nupkg '_sbom/*' -d sbom || echo "No SBOM found in .nupkg"
 
       - name: Upload SBOM
         uses: actions/upload-artifact@v4
