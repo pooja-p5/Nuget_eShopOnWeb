@@ -25,8 +25,19 @@ jobs:
         run: dotnet restore ./eShopOnWeb.sln
 
       # 4. List packages including transitives
-      - name: Generate package list
-        run: dotnet list ./eShopOnWeb.sln package --include-transitive > packages.txt
+      - name: List packages for all projects
+        run: |
+              > packages.txt
+              for proj in $(find src -name "*.csproj"); do
+                echo "=== $proj ===" >> packages.txt
+                dotnet list $proj package --include-transitive >> packages.txt || true
+              done
+              # capture legacy packages.config too
+              for pkg in $(find src -name "packages.config"); do
+                echo "=== $pkg ===" >> packages.txt
+                xmllint --xpath "//package/@id | //package/@version" $pkg >> packages.txt
+              done
+            
 
       # 5. Upload as artifact
       - name: Upload package list
