@@ -14,8 +14,9 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      - name: List
-        run: dotnet list package
+
+      - name: Restore dependencies
+        run: dotnet restore ./eShopOnWeb.sln
 
 
      
