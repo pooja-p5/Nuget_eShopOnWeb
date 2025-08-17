@@ -1,10 +1,10 @@
-name: Generate NuGet SBOM
+name: Generate Packages
 
 on:
   workflow_dispatch:
 
 jobs:
-  generate-nuget-sbom:
+  generate-nuget-packages:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -14,22 +14,8 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      - name: Restore
-        run: dotnet restore eShopOnWeb.sln
+      - name: List
+        run: dotnet list package
 
-      - name: Pack with SBOM
-        run: dotnet pack src/ApplicationCore/ApplicationCore.csproj -o output -p:IncludeSbom=true
 
-      - name: List contents of .nupkg (debug)
-        run: unzip -l output/*.nupkg
-
-      - name: Extract SBOM if present
-        run: |
-          mkdir -p sbom
-          unzip -o output/*.nupkg '_sbom/*' -d sbom || echo "No SBOM found in .nupkg"
-
-      - name: Upload SBOM
-        uses: actions/upload-artifact@v4
-        with:
-          name: nuget-sbom
-          path: sbom/_sbom/
+     
