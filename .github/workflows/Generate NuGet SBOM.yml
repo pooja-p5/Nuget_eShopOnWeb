@@ -18,5 +18,9 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore ./eShopOnWeb.sln
 
+      -name: List 
+      run: dotnet list ./src/eShopOnWeb.sln package > packages.txt
+      
+
 
      
